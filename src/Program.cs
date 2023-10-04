@@ -1,4 +1,29 @@
-﻿class Color
+﻿internal class Program
+{
+    private static void Main(string[] args)
+    {
+        var col = new Color(23, 42, 223);
+        var car = new Car(23, "small", col);
+
+        var shallowCopy = car.ShallowCopy();
+        var deepCopy = car.DeepCopy();
+
+        shallowCopy.id += 1;
+        shallowCopy.size = "big";
+        shallowCopy.color.red = 656565;
+
+        Console.WriteLine("+==============original=============");
+        Console.WriteLine(car.ToString());
+        Console.WriteLine("+==============Shallow Copy=============");
+        Console.WriteLine(shallowCopy.ToString());
+        Console.WriteLine("+============Deep Copy===============");
+        Console.WriteLine(deepCopy.ToString());
+
+        Console.ReadKey();
+    }
+
+}
+class Color
 {
     public int red;
     public int green;
@@ -10,73 +35,48 @@
         this.green = green;
         this.blue = blue;
     }
+
+    public Color? ShallowCopy()
+    {
+        return this.MemberwiseClone() as Color;
+    }
 }
 
-class MyObject : ICloneable
+class Car : ICloneable
 {
     public int id;
     public string size;
-    public Color col;
+    public Color color;
 
-    public MyObject(int id, string size, Color col)
+    public Car(int id, string size, Color col)
     {
         this.id = id;
         this.size = size;
-        this.col = col;
+        this.color = col;
+    }
+
+    public Car? ShallowCopy()
+    {
+        return this.MemberwiseClone() as Car;
+    }
+
+    public Car? DeepCopy()
+    {
+        var deepCopy = this.MemberwiseClone() as Car;
+        deepCopy.color = this.color.ShallowCopy() as Color;
+
+        return deepCopy;
     }
 
     public object Clone()
     {
-        return new MyObject(this.id, this.size, this.col);
+        return new Car(this.id, this.size, this.color);
     }
 
     public override string ToString()
     {
-        var s = String.Format("id: {0}, size: {1}, color:({2}, {3}, {4})",
-            this.id, this.size, this.col.red, this.col.green, this.col.blue);
-        return s;
-    }
-}
-
-
-internal class Program
-{
-    private static void Main(string[] args)
-    {
-        //ShallowCopy();
-        DeepCopy();
-
-        Console.ReadKey();
-        //Console.WriteLine("Hello, World!");
-    }
-
-    private static void ShallowCopy()
-    {
-        var col = new Color(23, 42, 223);
-        var obj1 = new MyObject(23, "small", col);
-
-        var obj2 = (MyObject)obj1.Clone();
-
-        obj2.id += 1;
-        obj2.size = "big";
-        obj2.col.red = 255;
-
-        Console.WriteLine(obj1);
-        Console.WriteLine(obj2);
-    }
-
-    private static void DeepCopy()
-    {
-        var col = new Color(23, 42, 223);
-        var obj1 = new MyObject(23, "small", col);
-
-        var obj2 = (MyObject)obj1.Clone();
-
-        obj2.id += 1;
-        obj2.size = "big";
-        obj2.col.red = 255;
-
-        Console.WriteLine(obj1);
-        Console.WriteLine(obj2);
+        var strings = String.Format("id: {0}, size: {1}, color:({2}, {3}, {4})",
+            this.id, this.size, this.color.red, this.color.green, this.color.blue);
+        return strings;
     }
 }
