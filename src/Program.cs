@@ -21,8 +21,9 @@
 
         Console.ReadKey();
     }
-
 }
+
+#region Objects
 class Color
 {
     public int red;
@@ -80,3 +81,4 @@ class Car : ICloneable
         return strings;
     }
 }
+#endregion Objects
